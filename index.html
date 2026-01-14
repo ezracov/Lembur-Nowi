@@ -104,408 +104,92 @@
     <button onclick="logout()">Logout</button>
   </div>
 
-  <script>
-    // === Data dari sheet EMP (contoh hardcode) ===
-    const users = [
-{ username: "ARIEF MULYANA", password: "09-04-1973" },
-{ username: "ARIO MAULANA NUGROHO", password: "06-03-2000" },
-{ username: "ASIH SUNARSIH", password: "04-02-1994" },
-{ username: "ELIN DESRIYATI PRIYATNA", password: "02-12-1997" },
-{ username: "ETI HENRAWATI", password: "10-12-1988" },
-{ username: "HERU ANDI MULYANTO", password: "03-04-1974" },
-{ username: "INDRA HERMAWAN", password: "23-06-1982" },
-{ username: "ISMET RAHADIAN", password: "01-11-1980" },
-{ username: "JOKO SURYANTO", password: "14-03-1975" },
-{ username: "JOKO WIYANTO", password: "08-10-1967" },
-{ username: "KAMALLUDIN", password: "31-12-1968" },
-{ username: "KAZUHIRO SHIMAZU", password: "04-07-1972" },
-{ username: "KENJI SHIMAZU", password: "07-01-1975" },
-{ username: "KIKI SEPTIADI", password: "14-09-1995" },
-{ username: "LIA HASANAH", password: "19-06-1991" },
-{ username: "M IRZI FAHROZI", password: "05-10-1996" },
-{ username: "MANSYURAH HAMIDA KARSA", password: "31-12-1993" },
-{ username: "MOCH EZRA REYHANSYAH", password: "18-09-1998" },
-{ username: "RISKA", password: "07-11-1998" },
-{ username: "RIZAL ZULFIKAR", password: "03-03-1994" },
-{ username: "SARINAH", password: "25-04-1998" },
-{ username: "SHELLY APRILLIANTI", password: "25-04-1995" },
-{ username: "SITI NURJANAH", password: "08-08-1996" },
-{ username: "SUSANDI", password: "15-04-1983" },
-{ username: "SUTRISNO", password: "20-05-1983" },
-{ username: "VINA ERMANIA", password: "03-06-1997" },
-{ username: "WIDIA NINGSIH", password: "22-06-1984" },
-{ username: "YULI ROSMANIAR", password: "27-01-1972" },
-{ username: "ZUHDI SYAKURI", password: "12-09-1968" }
+ <script>
+let users = [];
+let lemburData = [];
 
-    ];
+// LOAD BOTH JSON FILES
+Promise.all([
+  fetch("user.json").then(r => r.json()),
+  fetch("lemburdata.json").then(r => r.json())
+]).then(([userJson, lemburJson]) => {
+  users = userJson;
+  lemburData = lemburJson;
 
-    // === Data lembur dari sheet DATA (contoh hardcode) ===
-    const lemburData = [
-      
-{ nama: "INDRA HERMAWAN", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "RISKA", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SARINAH", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SITI NURJANAH", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "LIA HASANAH", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SUSANDI", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "VINA ERMANIA", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "ETI HENRAWATI", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "21-11-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "RISKA", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "SARINAH", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "SITI NURJANAH", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "LIA HASANAH", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "KIKI SEPTIADI", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "MANSYURAH HAMIDA KARSA", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "VINA ERMANIA", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "WIDIA NINGSIH", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "ASIH SUNARSIH", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "M IRZI FAHROZI", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "ETI HENRAWATI", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "SUSANDI", tanggal: "22-11-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "INDRA HERMAWAN", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ETI HENRAWATI", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "24-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "25-11-2025", FromTo: "16:30 - 22:00", act: 5, index: 9.5 },
-{ nama: "ETI HENRAWATI", tanggal: "25-11-2025", FromTo: "16:30 - 22:00", act: 5, index: 9.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "25-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "26-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "26-11-2025", FromTo: "16:30 - 01:00", act: 8, index: 15.5 },
-{ nama: "ETI HENRAWATI", tanggal: "26-11-2025", FromTo: "16:30 - 01:00", act: 8, index: 15.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "27-11-2025", FromTo: "16:30 - 23:00", act: 6, index: 11.5 },
-{ nama: "ETI HENRAWATI", tanggal: "27-11-2025", FromTo: "16:30 - 23:00", act: 6, index: 11.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "27-11-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "28-11-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "28-11-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "WIDIA NINGSIH", tanggal: "28-11-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "RISKA", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "01-12-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "01-12-2025", FromTo: "07:00 - 07:30", act: 0.5, index: 0.75 },
-{ nama: "WIDIA NINGSIH", tanggal: "01-12-2025", FromTo: "07:00 - 07:30", act: 0.5, index: 0.75 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.75 },
-{ nama: "WIDIA NINGSIH", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.75 },
-{ nama: "ETI HENRAWATI", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "01-12-2025", FromTo: "06:30 - 07:30", act: 1, index: 1.5 },
-{ nama: "SUSANDI", tanggal: "01-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 6 },
-{ nama: "INDRA HERMAWAN", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "02-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "MANSYURAH HAMIDA KARSA", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "03-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "04-12-2025", FromTo: "16:30 - 21:30", act: 4.5, index: 8.5 },
-{ nama: "ETI HENRAWATI", tanggal: "04-12-2025", FromTo: "16:30 - 21:30", act: 4.5, index: 8.5 },
-{ nama: "SUSANDI", tanggal: "04-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "RISKA", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SITI NURJANAH", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SARINAH", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "VINA ERMANIA", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SUSANDI", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "05-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "VINA ERMANIA", tanggal: "06-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 13.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "06-12-2025", FromTo: "07:00 - 12:00", act: 5, index: 9.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "06-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 13.5 },
-{ nama: "SUSANDI", tanggal: "06-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 13.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "08-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "08-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "08-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "08-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "08-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "08-12-2025", FromTo: "16:30 - 22:00", act: 5, index: 9.5 },
-{ nama: "ETI HENRAWATI", tanggal: "08-12-2025", FromTo: "16:30 - 22:00", act: 5, index: 9.5 },
-{ nama: "SUSANDI", tanggal: "08-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "09-12-2025", FromTo: "16:30 - 22:30", act: 5.5, index: 10.5 },
-{ nama: "ETI HENRAWATI", tanggal: "09-12-2025", FromTo: "16:30 - 22:30", act: 5.5, index: 10.5 },
-{ nama: "RISKA", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "09-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "10-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "10-12-2025", FromTo: "16:30 - 22:30", act: 5.5, index: 10.5 },
-{ nama: "ETI HENRAWATI", tanggal: "10-12-2025", FromTo: "16:30 - 22:30", act: 5.5, index: 10.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SARINAH", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ETI HENRAWATI", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "11-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "12-12-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "12-12-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "WIDIA NINGSIH", tanggal: "12-12-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "SUSANDI", tanggal: "12-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "12-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SUSANDI", tanggal: "13-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "KIKI SEPTIADI", tanggal: "13-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "INDRA HERMAWAN", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "15-12-2025", FromTo: "16:30 - 23:00", act: 6, index: 11.5 },
-{ nama: "ETI HENRAWATI", tanggal: "15-12-2025", FromTo: "16:30 - 23:00", act: 6, index: 11.5 },
-{ nama: "SUSANDI", tanggal: "15-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "16-12-2025", FromTo: "16:30 - 22:30", act: 5.5, index: 10.5 },
-{ nama: "ETI HENRAWATI", tanggal: "16-12-2025", FromTo: "16:30 - 22:30", act: 5.5, index: 10.5 },
-{ nama: "SUSANDI", tanggal: "16-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RISKA", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "LIA HASANAH", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "17-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "17-12-2025", FromTo: "16:30 - 21:30", act: 4.5, index: 8.5 },
-{ nama: "ETI HENRAWATI", tanggal: "17-12-2025", FromTo: "16:30 - 21:30", act: 4.5, index: 8.5 },
-{ nama: "RISKA", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "VINA ERMANIA", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "M IRZI FAHROZI", tanggal: "18-12-2025", FromTo: "16:30 - 23:00", act: 6, index: 11.5 },
-{ nama: "ETI HENRAWATI", tanggal: "18-12-2025", FromTo: "16:30 - 23:00", act: 6, index: 11.5 },
-{ nama: "LIA HASANAH", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "18-12-2025", FromTo: "16:30 - 21:00", act: 4, index: 7.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "18-12-2025", FromTo: "16:30 - 21:00", act: 4, index: 7.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SITI NURJANAH", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "SUSANDI", tanggal: "18-12-2025", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "RISKA", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SITI NURJANAH", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "KIKI SEPTIADI", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "SUSANDI", tanggal: "19-12-2025", FromTo: "06:30 - 07:00", act: 0.5, index: 0.75 },
-{ nama: "SUSANDI", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.75 },
-{ nama: "VINA ERMANIA", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "ASIH SUNARSIH", tanggal: "19-12-2025", FromTo: "06:00 - 07:00", act: 1, index: 1.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "19-12-2025", FromTo: "06:00 - 07:00", act: 1, index: 1.5 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "19-12-2025", FromTo: "06:00 - 07:00", act: 1, index: 1.5 },
-{ nama: "WIDIA NINGSIH", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 7 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 7 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "19-12-2025", FromTo: "16:00 - 20:00", act: 3.5, index: 6.5 },
-{ nama: "INDRA HERMAWAN", tanggal: "20-12-2025", FromTo: "07:00 - 12:00", act: 5, index: 10 },
-{ nama: "HERU ANDI MULYANTO", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "RISKA", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "SITI NURJANAH", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "KIKI SEPTIADI", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "RIZAL ZULFIKAR", tanggal: "20-12-2025", FromTo: "07:00 - 12:00", act: 5, index: 10 },
-{ nama: "VINA ERMANIA", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "M IRZI FAHROZI", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "SUSANDI", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "ELIN DESRIYATI PRIYATNA", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "WIDIA NINGSIH", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 },
-{ nama: "SHELLY APRILLIANTI", tanggal: "20-12-2025", FromTo: "07:00 - 15:00", act: 7, index: 14 }
-    ];
+  populateUserDropdown();
+}).catch(err => {
+  console.error("Failed loading JSON:", err);
+});
 
-    // Populate dropdown
-    const usernameSelect = document.getElementById("username");
-    users.forEach(u => {
-      const option = document.createElement("option");
-      option.value = u.username;
-      option.textContent = u.username;
-      usernameSelect.appendChild(option);
-    });
+// POPULATE USER DROPDOWN
+function populateUserDropdown() {
+  const usernameSelect = document.getElementById("username");
 
-    function login() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+  users.forEach(u => {
+    const option = document.createElement("option");
+    option.value = u.username;
+    option.textContent = u.username;
+    usernameSelect.appendChild(option);
+  });
+}
 
-      if (!username) {
-        document.getElementById("errorMsg").textContent = "Silakan pilih username dulu!";
-        return;
-      }
+// LOGIN FUNCTION
+function login() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const errorMsg = document.getElementById("errorMsg");
 
-      const user = users.find(u => u.username === username && u.password === password);
+  if (!username) {
+    errorMsg.textContent = "Silakan pilih username dulu!";
+    return;
+  }
 
-      if (user) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-        document.getElementById("welcome").textContent = user.username;
+  const user = users.find(
+    u => u.username === username && u.password === password
+  );
 
-        const userData = lemburData.filter(d => d.nama === user.username);
-        const tbody = document.querySelector("#lemburTable tbody");
-        tbody.innerHTML = "";
+  if (!user) {
+    errorMsg.textContent = "Username atau Password salah!";
+    return;
+  }
 
-        let total = 0;
-        userData.forEach(d => {
-          const row = `<tr>
-                        <td>${d.tanggal}</td>
-                        <td>${d.FromTo}</td>
-                        <td>${d.act}</td>
-                        <td>${d.index}</td>
-                      </tr>`;
-          tbody.innerHTML += row;
-          total += d.index;
-        });
+  // SHOW DASHBOARD
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  document.getElementById("welcome").textContent = `Welcome, ${user.username}`;
 
-        document.getElementById("totalIndex").textContent = total.toFixed(2);
+  // FILTER LEMBUR DATA
+  const userData = lemburData.filter(d => d.nama === user.username);
+  const tbody = document.querySelector("#lemburTable tbody");
+  tbody.innerHTML = "";
 
-      } else {
-        document.getElementById("errorMsg").textContent = "Username atau Password salah!";
-      }
-    }
+  let total = 0;
+  userData.forEach(d => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${d.tanggal}</td>
+        <td>${d.FromTo}</td>
+        <td>${d.act}</td>
+        <td>${d.index}</td>
+      </tr>
+    `;
+    total += Number(d.index);
+  });
 
-    function logout() {
-      document.getElementById("dashboard").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("password").value = "";
-      document.getElementById("errorMsg").textContent = "";
-      document.getElementById("username").value = "";
-      document.querySelector("#lemburTable tbody").innerHTML = "";
-      document.getElementById("totalIndex").textContent = "0";
-    }
-  </script>
+  document.getElementById("totalIndex").textContent = total.toFixed(2);
+}
+
+// LOGOUT
+function logout() {
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("loginBox").style.display = "block";
+  document.getElementById("password").value = "";
+  document.getElementById("errorMsg").textContent = "";
+  document.getElementById("username").value = "";
+  document.querySelector("#lemburTable tbody").innerHTML = "";
+  document.getElementById("totalIndex").textContent = "0";
+}
+</script>
+
 </body>
 </html>
