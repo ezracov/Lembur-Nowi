@@ -558,7 +558,7 @@
         
         // Memunculkan Nama dan Sisa Cuti di Dashboard
         document.getElementById("welcome").textContent = user.username;
-        document.getElementById("infoCuti").textContent = "Sisa Cuti: " + user.sisaCuti + " Hari";
+        document.getElementById("infoCuti").innerHTML = `Sisa Cuti: ${user.sisaCuti} Hari <br><span style="font-size: 14px; font-weight: normal; color: #555;">Berlaku s/d: ${user.berlaku}</span>`;
 
         const userData = lemburData.filter(d => d.nama === user.username);
         const tbody = document.querySelector("#lemburTable tbody");
