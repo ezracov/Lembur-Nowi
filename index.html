@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Lemburan</title>
+  <title>Login Lemburan & Cuti</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -21,7 +21,6 @@
     }
     h2, h3 { text-align: center; }
     
-    /* Tambahan styling untuk teks sisa cuti */
     .sisa-cuti { 
       text-align: center; 
       color: #e67e22; 
@@ -35,7 +34,7 @@
       padding: 10px;
       margin: 10px 0;
       font-size: 16px;
-      box-sizing: border-box; /* Mencegah elemen melebar keluar box */
+      box-sizing: border-box;
     }
     button {
       width: 100%;
@@ -51,7 +50,8 @@
     
     .table-container {
       overflow-x: auto;
-      margin-top: 20px;
+      margin-top: 10px;
+      margin-bottom: 20px;
     }
     table {
       width: 100%;
@@ -66,6 +66,9 @@
     }
     th {
       background: #fccaa4;
+    }
+    .th-cuti {
+      background: #a4d4fc; /* Warna berbeda untuk header cuti */
     }
     tfoot td {
       font-weight: bold;
@@ -93,9 +96,22 @@
   <div class="dashboard" id="dashboard" style="display:none;">
     <h2 id="welcome"></h2>
     
-    <!-- Elemen baru untuk menampilkan Sisa Cuti -->
     <div class="sisa-cuti" id="infoCuti"></div>
     
+    <!-- Tabel Riwayat Cuti (Baru Ditambahkan) -->
+    <h3>Riwayat Pengambilan Cuti</h3>
+    <div class="table-container">
+      <table id="cutiTable">
+        <thead>
+          <tr>
+            <th class="th-cuti">Tanggal Cuti</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Tabel Data Lembur -->
     <h3>Data Lembur 21 Mei 2026 - 20 Juni 2026</h3>
     <div class="table-container">
       <table id="lemburTable">
@@ -121,42 +137,41 @@
   </div>
 
   <script>
-    // === Data dari sheet EMP (contoh hardcode) ===
-    // Menambahkan properti sisaCuti ke dalam masing-masing user
+    // === Data Users ===
     const users = [
-{ username: "ARIO MAULANA NUGROHO", password: "06-03-2000",sisaCuti: 5,berlaku: "05-12-2026"},
-{ username: "ASIH SUNARSIH", password: "04-02-1994",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "ELIN DESRIYATI PRIYATNA", password: "02-12-1997",sisaCuti: 6,berlaku: "05-08-2026"},
-{ username: "ETI HENRAWATI", password: "10-12-1988",sisaCuti: 3,berlaku: "24-06-2026"},
-{ username: "HERU ANDI MULYANTO", password: "03-04-1974",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "INDRA HERMAWAN", password: "23-06-1982",sisaCuti: 7,berlaku: "22-12-2026"},
-{ username: "ISMET RAHADIAN", password: "01-11-1980",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "JOKO SURYANTO", password: "14-03-1975",sisaCuti: 4,berlaku: "17-01-2027"},
-{ username: "JOKO WIYANTO", password: "08-10-1967",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "KAMALLUDIN", password: "31-12-1968",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "KIKI SEPTIADI", password: "14-09-1995",sisaCuti: 6,berlaku: "05-08-2026"},
-{ username: "LIA HASANAH", password: "19-06-1991",sisaCuti: 6,berlaku: "03-03-2027"},
-{ username: "M IRZI FAHROZI", password: "05-10-1996",sisaCuti: 5,berlaku: "14-01-2027"},
-{ username: "MANSYURAH HAMIDA KARSA", password: "31-12-1993",sisaCuti: 12,berlaku: "04-06-2027"},
-{ username: "MOCH EZRA REYHANSYAH", password: "18-09-1998",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "RISKA", password: "07-11-1998",sisaCuti: 4,berlaku: "20-01-2027"},
-{ username: "RIZAL ZULFIKAR", password: "03-03-1994",sisaCuti: 6,berlaku: "25-11-2026"},
-{ username: "SARINAH", password: "25-04-1998",sisaCuti: 6,berlaku: "20-01-2027"},
-{ username: "SHELLY APRILLIANTI", password: "25-04-1995",sisaCuti: 5,berlaku: "03-03-2027"},
-{ username: "SITI NURJANAH", password: "08-08-1996",sisaCuti: 4,berlaku: "05-08-2026"},
-{ username: "SUSANDI", password: "15-04-1983",sisaCuti: 3,berlaku: "21-12-2026"},
-{ username: "SUTRISNO", password: "20-05-1983",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "VINA ERMANIA", password: "03-06-1997",sisaCuti: 6,berlaku: "21-11-2026"},
-{ username: "WAHYU DARMAWAN", password: "15-02-1974",sisaCuti: 0,berlaku: "05-05-2027"},
-{ username: "WIDIA NINGSIH", password: "22-06-1984",sisaCuti: 6,berlaku: "21-11-2026"},
-{ username: "YULI ROSMANIAR", password: "27-01-1972",sisaCuti: 12,berlaku: "21-04-2027"},
-{ username: "ZUHDI SYAKURI", password: "12-09-1968",sisaCuti: 3,berlaku: "01-10-2026"},
-{ username: "BAGAS FITRIANTO", password: "27-12-2000",sisaCuti: 0,berlaku: "26-05-2027"},
-{ username: "ALVIN SOPYAN", password: "14-02-1991",sisaCuti: 0,berlaku: "28-05-2027"},
-{ username: "FAJAR ADITYA PRATAMA", password: "19-07-1999",sisaCuti: 0,berlaku: "02-06-2027"}
+      { username: "ARIO MAULANA NUGROHO", password: "06-03-2000",sisaCuti: 5,berlaku: "05-12-2026"},
+      { username: "ASIH SUNARSIH", password: "04-02-1994",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "ELIN DESRIYATI PRIYATNA", password: "02-12-1997",sisaCuti: 6,berlaku: "05-08-2026"},
+      { username: "ETI HENRAWATI", password: "10-12-1988",sisaCuti: 3,berlaku: "24-06-2026"},
+      { username: "HERU ANDI MULYANTO", password: "03-04-1974",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "INDRA HERMAWAN", password: "23-06-1982",sisaCuti: 7,berlaku: "22-12-2026"},
+      { username: "ISMET RAHADIAN", password: "01-11-1980",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "JOKO SURYANTO", password: "14-03-1975",sisaCuti: 4,berlaku: "17-01-2027"},
+      { username: "JOKO WIYANTO", password: "08-10-1967",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "KAMALLUDIN", password: "31-12-1968",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "KIKI SEPTIADI", password: "14-09-1995",sisaCuti: 6,berlaku: "05-08-2026"},
+      { username: "LIA HASANAH", password: "19-06-1991",sisaCuti: 6,berlaku: "03-03-2027"},
+      { username: "M IRZI FAHROZI", password: "05-10-1996",sisaCuti: 5,berlaku: "14-01-2027"},
+      { username: "MANSYURAH HAMIDA KARSA", password: "31-12-1993",sisaCuti: 12,berlaku: "04-06-2027"},
+      { username: "MOCH EZRA REYHANSYAH", password: "18-09-1998",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "RISKA", password: "07-11-1998",sisaCuti: 4,berlaku: "20-01-2027"},
+      { username: "RIZAL ZULFIKAR", password: "03-03-1994",sisaCuti: 6,berlaku: "25-11-2026"},
+      { username: "SARINAH", password: "25-04-1998",sisaCuti: 6,berlaku: "20-01-2027"},
+      { username: "SHELLY APRILLIANTI", password: "25-04-1995",sisaCuti: 5,berlaku: "03-03-2027"},
+      { username: "SITI NURJANAH", password: "08-08-1996",sisaCuti: 4,berlaku: "05-08-2026"},
+      { username: "SUSANDI", password: "15-04-1983",sisaCuti: 3,berlaku: "21-12-2026"},
+      { username: "SUTRISNO", password: "20-05-1983",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "VINA ERMANIA", password: "03-06-1997",sisaCuti: 6,berlaku: "21-11-2026"},
+      { username: "WAHYU DARMAWAN", password: "15-02-1974",sisaCuti: 0,berlaku: "05-05-2027"},
+      { username: "WIDIA NINGSIH", password: "22-06-1984",sisaCuti: 6,berlaku: "21-11-2026"},
+      { username: "YULI ROSMANIAR", password: "27-01-1972",sisaCuti: 12,berlaku: "21-04-2027"},
+      { username: "ZUHDI SYAKURI", password: "12-09-1968",sisaCuti: 3,berlaku: "01-10-2026"},
+      { username: "BAGAS FITRIANTO", password: "27-12-2000",sisaCuti: 0,berlaku: "26-05-2027"},
+      { username: "ALVIN SOPYAN", password: "14-02-1991",sisaCuti: 0,berlaku: "28-05-2027"},
+      { username: "FAJAR ADITYA PRATAMA", password: "19-07-1999",sisaCuti: 0,berlaku: "02-06-2027"}
     ];
 
-    // === Data lembur dari sheet DATA (Dipotong untuk kerapian, masukkan data asli Anda di sini) ===
+    // === Data Lembur (Saya ringkas untuk contoh, masukkan data full kamu di sini) ===
     const lemburData = [
 { nama: "RISKA", tanggal: "21-05-2026", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
 { nama: "HERU ANDI MULYANTO", tanggal: "21-05-2026", FromTo: "16:30 - 20:00", act: 3, index: 5.5 },
@@ -539,6 +554,192 @@
 { nama: "KIKI SEPTIADI", tanggal: "20-06-2026", FromTo: "07:00 - 15:00", act: 7, index: 14 }
     ];
 
+    // === Data Cuti (Baru Ditambahkan) ===
+    const cutiData = [
+ { nama: "KAZUHIRO SHIMAZU", cutitanggal: "28-12-2025" },
+{ nama: "KENJI SHIMAZU", cutitanggal: "28-12-2025" },
+{ nama: "JOKO WIYANTO", cutitanggal: "28-12-2025" },
+{ nama: "SUTRISNO", cutitanggal: "28-12-2025" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "28-12-2025" },
+{ nama: "YULI ROSMANIAR", cutitanggal: "28-12-2025" },
+{ nama: "KAMALLUDIN", cutitanggal: "28-12-2025" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "28-12-2025" },
+{ nama: "ZUHDI SYAKURI", cutitanggal: "28-12-2025" },
+{ nama: "ARIEF MULYANA", cutitanggal: "28-12-2025" },
+{ nama: "JOKO SURYANTO", cutitanggal: "28-12-2025" },
+{ nama: "SITI NURJANAH", cutitanggal: "28-12-2025" },
+{ nama: "ARIO MAULANA NUGROHO", cutitanggal: "28-12-2025" },
+{ nama: "KAZUHIRO SHIMAZU", cutitanggal: "02-01-2026" },
+{ nama: "KENJI SHIMAZU", cutitanggal: "02-01-2026" },
+{ nama: "JOKO WIYANTO", cutitanggal: "02-01-2026" },
+{ nama: "SUTRISNO", cutitanggal: "02-01-2026" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "02-01-2026" },
+{ nama: "YULI ROSMANIAR", cutitanggal: "02-01-2026" },
+{ nama: "KAMALLUDIN", cutitanggal: "02-01-2026" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "02-01-2026" },
+{ nama: "ZUHDI SYAKURI", cutitanggal: "02-01-2026" },
+{ nama: "ARIEF MULYANA", cutitanggal: "02-01-2026" },
+{ nama: "SUSANDI", cutitanggal: "02-01-2026" },
+{ nama: "INDRA HERMAWAN", cutitanggal: "02-01-2026" },
+{ nama: "JOKO SURYANTO", cutitanggal: "02-01-2026" },
+{ nama: "ASIH SUNARSIH", cutitanggal: "02-01-2026" },
+{ nama: "HERU ANDI MULYANTO", cutitanggal: "02-01-2026" },
+{ nama: "MANSYURAH HAMIDA KARSA", cutitanggal: "02-01-2026" },
+{ nama: "ETI HENRAWATI", cutitanggal: "02-01-2026" },
+{ nama: "ELIN DESRIYATI PRIYATNA", cutitanggal: "02-01-2026" },
+{ nama: "KIKI SEPTIADI", cutitanggal: "02-01-2026" },
+{ nama: "SITI NURJANAH", cutitanggal: "02-01-2026" },
+{ nama: "VINA ERMANIA", cutitanggal: "02-01-2026" },
+{ nama: "WIDIA NINGSIH", cutitanggal: "02-01-2026" },
+{ nama: "RIZAL ZULFIKAR", cutitanggal: "02-01-2026" },
+{ nama: "ARIO MAULANA NUGROHO", cutitanggal: "02-01-2026" },
+{ nama: "M IRZI FAHROZI", cutitanggal: "02-01-2026" },
+{ nama: "RISKA", cutitanggal: "02-01-2026" },
+{ nama: "SARINAH", cutitanggal: "02-01-2026" },
+{ nama: "SHELLY APRILLIANTI", cutitanggal: "02-01-2026" },
+{ nama: "LIA HASANAH", cutitanggal: "02-01-2026" },
+{ nama: "SITI NURJANAH", cutitanggal: "20-01-2026" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "26-01-2026" },
+{ nama: "SUSANDI", cutitanggal: "27-01-2026" },
+{ nama: "M IRZI FAHROZI", cutitanggal: "04-02-2026" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "11-02-2026" },
+{ nama: "KAZUHIRO SHIMAZU", cutitanggal: "14-02-2026" },
+{ nama: "KENJI SHIMAZU", cutitanggal: "14-02-2026" },
+{ nama: "JOKO WIYANTO", cutitanggal: "14-02-2026" },
+{ nama: "SUTRISNO", cutitanggal: "14-02-2026" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "14-02-2026" },
+{ nama: "YULI ROSMANIAR", cutitanggal: "14-02-2026" },
+{ nama: "KAMALLUDIN", cutitanggal: "14-02-2026" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "14-02-2026" },
+{ nama: "ZUHDI SYAKURI", cutitanggal: "14-02-2026" },
+{ nama: "ARIEF MULYANA", cutitanggal: "14-02-2026" },
+{ nama: "SUSANDI", cutitanggal: "14-02-2026" },
+{ nama: "JOKO SURYANTO", cutitanggal: "14-02-2026" },
+{ nama: "ASIH SUNARSIH", cutitanggal: "14-02-2026" },
+{ nama: "LIA HASANAH", cutitanggal: "14-02-2026" },
+{ nama: "SUSANDI", cutitanggal: "12-03-2026" },
+{ nama: "RISKA", cutitanggal: "17-03-2026" },
+{ nama: "KAZUHIRO SHIMAZU", cutitanggal: "18-03-2026" },
+{ nama: "KENJI SHIMAZU", cutitanggal: "18-03-2026" },
+{ nama: "JOKO WIYANTO", cutitanggal: "18-03-2026" },
+{ nama: "SUTRISNO", cutitanggal: "18-03-2026" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "18-03-2026" },
+{ nama: "YULI ROSMANIAR", cutitanggal: "18-03-2026" },
+{ nama: "KAMALLUDIN", cutitanggal: "18-03-2026" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "18-03-2026" },
+{ nama: "ZUHDI SYAKURI", cutitanggal: "18-03-2026" },
+{ nama: "ARIEF MULYANA", cutitanggal: "18-03-2026" },
+{ nama: "SUSANDI", cutitanggal: "18-03-2026" },
+{ nama: "INDRA HERMAWAN", cutitanggal: "18-03-2026" },
+{ nama: "JOKO SURYANTO", cutitanggal: "18-03-2026" },
+{ nama: "ASIH SUNARSIH", cutitanggal: "18-03-2026" },
+{ nama: "HERU ANDI MULYANTO", cutitanggal: "18-03-2026" },
+{ nama: "ETI HENRAWATI", cutitanggal: "18-03-2026" },
+{ nama: "ELIN DESRIYATI PRIYATNA", cutitanggal: "18-03-2026" },
+{ nama: "KIKI SEPTIADI", cutitanggal: "18-03-2026" },
+{ nama: "SITI NURJANAH", cutitanggal: "18-03-2026" },
+{ nama: "VINA ERMANIA", cutitanggal: "18-03-2026" },
+{ nama: "WIDIA NINGSIH", cutitanggal: "18-03-2026" },
+{ nama: "RIZAL ZULFIKAR", cutitanggal: "18-03-2026" },
+{ nama: "ARIO MAULANA NUGROHO", cutitanggal: "18-03-2026" },
+{ nama: "M IRZI FAHROZI", cutitanggal: "18-03-2026" },
+{ nama: "RISKA", cutitanggal: "18-03-2026" },
+{ nama: "SARINAH", cutitanggal: "18-03-2026" },
+{ nama: "SHELLY APRILLIANTI", cutitanggal: "18-03-2026" },
+{ nama: "LIA HASANAH", cutitanggal: "18-03-2026" },
+{ nama: "KAZUHIRO SHIMAZU", cutitanggal: "20-03-2026" },
+{ nama: "KENJI SHIMAZU", cutitanggal: "20-03-2026" },
+{ nama: "JOKO WIYANTO", cutitanggal: "20-03-2026" },
+{ nama: "SUTRISNO", cutitanggal: "20-03-2026" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "20-03-2026" },
+{ nama: "YULI ROSMANIAR", cutitanggal: "20-03-2026" },
+{ nama: "KAMALLUDIN", cutitanggal: "20-03-2026" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "20-03-2026" },
+{ nama: "ZUHDI SYAKURI", cutitanggal: "20-03-2026" },
+{ nama: "ARIEF MULYANA", cutitanggal: "20-03-2026" },
+{ nama: "SUSANDI", cutitanggal: "20-03-2026" },
+{ nama: "INDRA HERMAWAN", cutitanggal: "20-03-2026" },
+{ nama: "JOKO SURYANTO", cutitanggal: "20-03-2026" },
+{ nama: "ASIH SUNARSIH", cutitanggal: "20-03-2026" },
+{ nama: "HERU ANDI MULYANTO", cutitanggal: "20-03-2026" },
+{ nama: "ETI HENRAWATI", cutitanggal: "20-03-2026" },
+{ nama: "ELIN DESRIYATI PRIYATNA", cutitanggal: "20-03-2026" },
+{ nama: "KIKI SEPTIADI", cutitanggal: "20-03-2026" },
+{ nama: "SITI NURJANAH", cutitanggal: "20-03-2026" },
+{ nama: "VINA ERMANIA", cutitanggal: "20-03-2026" },
+{ nama: "WIDIA NINGSIH", cutitanggal: "20-03-2026" },
+{ nama: "RIZAL ZULFIKAR", cutitanggal: "20-03-2026" },
+{ nama: "ARIO MAULANA NUGROHO", cutitanggal: "20-03-2026" },
+{ nama: "M IRZI FAHROZI", cutitanggal: "20-03-2026" },
+{ nama: "RISKA", cutitanggal: "20-03-2026" },
+{ nama: "SARINAH", cutitanggal: "20-03-2026" },
+{ nama: "SHELLY APRILLIANTI", cutitanggal: "20-03-2026" },
+{ nama: "LIA HASANAH", cutitanggal: "20-03-2026" },
+{ nama: "KAZUHIRO SHIMAZU", cutitanggal: "23-03-2026" },
+{ nama: "KENJI SHIMAZU", cutitanggal: "23-03-2026" },
+{ nama: "JOKO WIYANTO", cutitanggal: "23-03-2026" },
+{ nama: "SUTRISNO", cutitanggal: "23-03-2026" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "23-03-2026" },
+{ nama: "YULI ROSMANIAR", cutitanggal: "23-03-2026" },
+{ nama: "KAMALLUDIN", cutitanggal: "23-03-2026" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "23-03-2026" },
+{ nama: "ZUHDI SYAKURI", cutitanggal: "23-03-2026" },
+{ nama: "SUSANDI", cutitanggal: "23-03-2026" },
+{ nama: "INDRA HERMAWAN", cutitanggal: "23-03-2026" },
+{ nama: "JOKO SURYANTO", cutitanggal: "23-03-2026" },
+{ nama: "ASIH SUNARSIH", cutitanggal: "23-03-2026" },
+{ nama: "HERU ANDI MULYANTO", cutitanggal: "23-03-2026" },
+{ nama: "MANSYURAH HAMIDA KARSA", cutitanggal: "23-03-2026" },
+{ nama: "ETI HENRAWATI", cutitanggal: "23-03-2026" },
+{ nama: "ELIN DESRIYATI PRIYATNA", cutitanggal: "23-03-2026" },
+{ nama: "KIKI SEPTIADI", cutitanggal: "23-03-2026" },
+{ nama: "SITI NURJANAH", cutitanggal: "23-03-2026" },
+{ nama: "VINA ERMANIA", cutitanggal: "23-03-2026" },
+{ nama: "WIDIA NINGSIH", cutitanggal: "23-03-2026" },
+{ nama: "RIZAL ZULFIKAR", cutitanggal: "23-03-2026" },
+{ nama: "ARIO MAULANA NUGROHO", cutitanggal: "23-03-2026" },
+{ nama: "M IRZI FAHROZI", cutitanggal: "23-03-2026" },
+{ nama: "RISKA", cutitanggal: "23-03-2026" },
+{ nama: "SARINAH", cutitanggal: "23-03-2026" },
+{ nama: "SHELLY APRILLIANTI", cutitanggal: "23-03-2026" },
+{ nama: "LIA HASANAH", cutitanggal: "23-03-2026" },
+{ nama: "KAZUHIRO SHIMAZU", cutitanggal: "24-03-2026" },
+{ nama: "KENJI SHIMAZU", cutitanggal: "24-03-2026" },
+{ nama: "JOKO WIYANTO", cutitanggal: "24-03-2026" },
+{ nama: "SUTRISNO", cutitanggal: "24-03-2026" },
+{ nama: "ISMET RAHADIAN", cutitanggal: "24-03-2026" },
+{ nama: "YULI ROSMANIAR", cutitanggal: "24-03-2026" },
+{ nama: "KAMALLUDIN", cutitanggal: "24-03-2026" },
+{ nama: "MOCH EZRA REYHANSYAH", cutitanggal: "24-03-2026" },
+{ nama: "ZUHDI SYAKURI", cutitanggal: "24-03-2026" },
+{ nama: "SUSANDI", cutitanggal: "24-03-2026" },
+{ nama: "INDRA HERMAWAN", cutitanggal: "24-03-2026" },
+{ nama: "JOKO SURYANTO", cutitanggal: "24-03-2026" },
+{ nama: "ASIH SUNARSIH", cutitanggal: "24-03-2026" },
+{ nama: "HERU ANDI MULYANTO", cutitanggal: "24-03-2026" },
+{ nama: "MANSYURAH HAMIDA KARSA", cutitanggal: "24-03-2026" },
+{ nama: "ETI HENRAWATI", cutitanggal: "24-03-2026" },
+{ nama: "ELIN DESRIYATI PRIYATNA", cutitanggal: "24-03-2026" },
+{ nama: "KIKI SEPTIADI", cutitanggal: "24-03-2026" },
+{ nama: "SITI NURJANAH", cutitanggal: "24-03-2026" },
+{ nama: "VINA ERMANIA", cutitanggal: "24-03-2026" },
+{ nama: "WIDIA NINGSIH", cutitanggal: "24-03-2026" },
+{ nama: "RIZAL ZULFIKAR", cutitanggal: "24-03-2026" },
+{ nama: "ARIO MAULANA NUGROHO", cutitanggal: "24-03-2026" },
+{ nama: "M IRZI FAHROZI", cutitanggal: "24-03-2026" },
+{ nama: "RISKA", cutitanggal: "24-03-2026" },
+{ nama: "SARINAH", cutitanggal: "24-03-2026" },
+{ nama: "SHELLY APRILLIANTI", cutitanggal: "24-03-2026" },
+{ nama: "LIA HASANAH", cutitanggal: "24-03-2026" },
+{ nama: "SUSANDI", cutitanggal: "17-04-2026" },
+{ nama: "HERU ANDI MULYANTO", cutitanggal: "17-04-2026" },
+{ nama: "RISKA", cutitanggal: "20-04-2026" },
+{ nama: "ARIO MAULANA NUGROHO", cutitanggal: "05-05-2026" },
+{ nama: "ETI HENRAWATI", cutitanggal: "16-06-2026" },
+{ nama: "ETI HENRAWATI", cutitanggal: "17-06-2026" },
+{ nama: "SHELLY APRILLIANTI", cutitanggal: "17-06-2026" }
+    ];
+
     // Populate dropdown
     const usernameSelect = document.getElementById("username");
     users.forEach(u => {
@@ -563,13 +764,26 @@
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
         
-        // Memunculkan Nama dan Sisa Cuti di Dashboard
         document.getElementById("welcome").textContent = user.username;
         document.getElementById("infoCuti").innerHTML = `Sisa Cuti: ${user.sisaCuti} Hari <br><span style="font-size: 14px; font-weight: normal; color: #555;">Berlaku s/d: ${user.berlaku}</span>`;
 
+        // === Render Data Cuti (Logika Baru) ===
+        const userCuti = cutiData.filter(c => c.nama === user.username);
+        const cutiTbody = document.querySelector("#cutiTable tbody");
+        cutiTbody.innerHTML = "";
+
+        if (userCuti.length > 0) {
+          userCuti.forEach(c => {
+            cutiTbody.innerHTML += `<tr><td>${c.cutitanggal}</td></tr>`;
+          });
+        } else {
+          cutiTbody.innerHTML = `<tr><td style="color: #999;">Tidak ada riwayat cuti</td></tr>`;
+        }
+
+        // === Render Data Lembur ===
         const userData = lemburData.filter(d => d.nama === user.username);
-        const tbody = document.querySelector("#lemburTable tbody");
-        tbody.innerHTML = "";
+        const lemburTbody = document.querySelector("#lemburTable tbody");
+        lemburTbody.innerHTML = "";
 
         let total = 0;
         userData.forEach(d => {
@@ -579,7 +793,7 @@
                         <td>${d.act}</td>
                         <td>${d.index}</td>
                       </tr>`;
-          tbody.innerHTML += row;
+          lemburTbody.innerHTML += row;
           total += d.index;
         });
 
@@ -598,7 +812,8 @@
       document.getElementById("password").value = "";
       document.getElementById("errorMsg").textContent = "";
       document.getElementById("username").value = "";
-      document.getElementById("infoCuti").textContent = ""; // Reset Sisa Cuti
+      document.getElementById("infoCuti").textContent = "";
+      document.querySelector("#cutiTable tbody").innerHTML = ""; // Reset tabel cuti
       document.querySelector("#lemburTable tbody").innerHTML = "";
       document.getElementById("totalIndex").textContent = "0";
     }
